@@ -10,6 +10,8 @@ public class BootStrapTest {
 
 
     public static void main(String[] args) {
+        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+
 
         final AtomicInteger num = new AtomicInteger(1);
 

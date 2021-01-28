@@ -10,6 +10,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.Constructor;
 import java.security.CodeSource;
 import java.util.*;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
@@ -40,9 +41,9 @@ public class GlogBootstrap {
                 File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
                 File spyJarFile = new File(arthasCoreJarFile.getParentFile(), GOLG_BASE_JAR);
                 instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
-                Class<?> aClass = parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
-                Constructor<?> constructor = aClass.getConstructor();
-                Object o = constructor.newInstance();
+//                Class<?> aClass = parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
+//                Constructor<?> constructor = aClass.getConstructor();
+//                Object o = constructor.newInstance();
             } else {
                 throw new IllegalStateException("can not find " + GOLG_BASE_JAR);
             }
@@ -50,6 +51,8 @@ public class GlogBootstrap {
         GlogTransformer glogTransformer = new GlogTransformer();
         // 加载 自定义的ClassFileTransformer
         instrumentation.addTransformer((ClassFileTransformer) glogTransformer, true);
+        //重定义类并载入新的字节码
+        instrumentation.retransformClasses(ThreadPoolExecutor.class);
     }
 
 

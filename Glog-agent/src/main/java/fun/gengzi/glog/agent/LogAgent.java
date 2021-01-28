@@ -118,11 +118,14 @@ final class LogAgent {
 
             System.out.println("Agent Load Done.");
 
-//            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
-//
-//            for (int i = 0; i < allLoadedClasses.length; i++) {
-//                System.out.println(allLoadedClasses[i]);
-//            }
+            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+
+            Class[] initiatedClasses = instrumentation.getInitiatedClasses(ClassLoader.getSystemClassLoader().getParent());
+
+
+            for (int i = 0; i < initiatedClasses.length; i++) {
+                System.out.println(initiatedClasses[i]);
+            }
 
 
         } catch (Throwable t) {

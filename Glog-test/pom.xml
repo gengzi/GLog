@@ -11,15 +11,22 @@
 
     <artifactId>Glog-test</artifactId>
 
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>fun.gengzi</groupId>-->
-<!--            <artifactId>Glog-Base</artifactId>-->
-<!--            <version>${project.version}</version>-->
-<!--            &lt;!&ndash;编译测试中有效&ndash;&gt;-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
+    <dependencies>
+        <dependency>
+            <groupId>fun.gengzi</groupId>
+            <artifactId>Glog-Base</artifactId>
+            <version>${project.version}</version>
+            <!--编译测试中有效-->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fun.gengzi</groupId>
+            <artifactId>Glog-core</artifactId>
+            <version>${project.version}</version>
+            <!--编译测试中有效-->
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>
