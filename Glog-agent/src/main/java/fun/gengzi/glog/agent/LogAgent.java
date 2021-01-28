@@ -3,6 +3,7 @@ package fun.gengzi.glog.agent;
 
 import fun.gengzi.glog.classloader.GlogClassLoader;
 
+import java.glog.base.MDCInheritableThreadLocal;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -12,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.jar.JarFile;
 
 /**
@@ -27,7 +29,7 @@ import java.util.jar.JarFile;
 final class LogAgent {
 
     private static final String GOLG_CORE_JAR = "Glog-core.jar";
-    private static final String GOLG_BASE_JAR = "Glog-base.jar";
+    private static final String GOLG_BASE_JAR = "Glog-Base.jar";
     private static final String GOLG_TRANSFORMER = "fun.gengzi.core.GlogTransformer";
     private static PrintStream ps = System.err;
     /**
@@ -66,6 +68,10 @@ final class LogAgent {
     private static synchronized void runLauncher(String args, Instrumentation instrumentation) {
         try {
             ps.println("<<< LogAgent start >>>");
+            try {
+                Class.forName("java.glog.base.MDCInheritableThreadLocal"); // 加载不到会抛异常
+            } catch (Throwable e) {
+            }
             // 传递的args参数分两个部分:arthasCoreJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
             if (args == null) {
                 args = "";
@@ -105,13 +111,45 @@ final class LogAgent {
                 return;
             }
 
+
+            ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
+            Class<?> spyClass = null;
+            if (parent != null) {
+                try {
+                    spyClass =parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
+                } catch (Throwable e) {
+                    // ignore
+                }
+            }
+            if (spyClass == null) {
+                CodeSource codeSource = LogAgent.class.getProtectionDomain().getCodeSource();
+                if (codeSource != null) {
+                    File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
+                    File spyJarFile = new File(arthasCoreJarFile.getParentFile(), GOLG_BASE_JAR);
+                    instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
+                    Class<?> aClass = parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
+                    Constructor<?> constructor = aClass.getConstructor();
+                    Object o = constructor.newInstance();
+                } else {
+                    throw new IllegalStateException("can not find " + GOLG_BASE_JAR);
+                }
+            }
+
+//            instrumentation.appendToBootstrapClassLoaderSearch(new JarFile("D:\\ideaworkspace\\Glog-Base.jar"));
             final ClassLoader agentLoader = getClassLoader(instrumentation, glogCoreJarFile);
             Class<?> aClass = agentLoader.loadClass(GOLG_TRANSFORMER);
             Constructor<?> constructor = aClass.getConstructor();
             Object instance = constructor.newInstance();
             // 加载 自定义的ClassFileTransformer
             instrumentation.addTransformer((ClassFileTransformer) instance, true);
-            instrumentation.appendToBootstrapClassLoaderSearch(new JarFile("D:\\ideaworkspace\\Glog-Base.jar"));
+            System.out.println("Agent Load Done.");
+
+            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+
+            for (int i = 0; i < allLoadedClasses.length; i++) {
+                System.out.println(allLoadedClasses[i]);
+            }
+
 
         } catch (Throwable t) {
             t.printStackTrace(ps);
