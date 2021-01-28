@@ -1,20 +1,17 @@
-package fun.gengzi.glog.base;
+package java.glog.base;
 
 
 import org.slf4j.MDC;
 
 import java.util.Map;
 
-public class MDCInheritableThreadLocal {
+public final class MDCInheritableThreadLocal {
 
     static {
-        System.out.println("Spy class loader is " + MDCInheritableThreadLocal.class.getClassLoader());
+        System.out.println("MDCInheritableThreadLocal class loader is " + MDCInheritableThreadLocal.class.getClassLoader());
     }
 
     private static final InheritableThreadLocal LOGGER_HOLDER = new InheritableThreadLocal<>();
-
-    private MDCInheritableThreadLocal() {
-    }
 
     public static void set(Object obj) {
         LOGGER_HOLDER.set(obj);
@@ -28,7 +25,7 @@ public class MDCInheritableThreadLocal {
         LOGGER_HOLDER.remove();
     }
 
-    public static void setMdc(){
+    public static void setMdc() {
         MDC.setContextMap((Map<String, String>) LOGGER_HOLDER.get());
     }
 

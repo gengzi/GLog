@@ -30,7 +30,8 @@ final class LogAgent {
 
     private static final String GOLG_CORE_JAR = "Glog-core.jar";
     private static final String GOLG_BASE_JAR = "Glog-Base.jar";
-    private static final String GOLG_TRANSFORMER = "fun.gengzi.core.GlogTransformer";
+    private static final String GET_INSTANCE = "getInstance";
+    private static final String GOLG_BOOTSTRAP = "fun.gengzi.core.GlogBootstrap";
     private static PrintStream ps = System.err;
     /**
      * <pre>
@@ -111,44 +112,17 @@ final class LogAgent {
                 return;
             }
 
-
-            ClassLoader parent = ClassLoader.getSystemClassLoader().getParent();
-            Class<?> spyClass = null;
-            if (parent != null) {
-                try {
-                    spyClass =parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
-                } catch (Throwable e) {
-                    // ignore
-                }
-            }
-            if (spyClass == null) {
-                CodeSource codeSource = LogAgent.class.getProtectionDomain().getCodeSource();
-                if (codeSource != null) {
-                    File arthasCoreJarFile = new File(codeSource.getLocation().toURI().getSchemeSpecificPart());
-                    File spyJarFile = new File(arthasCoreJarFile.getParentFile(), GOLG_BASE_JAR);
-                    instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
-                    Class<?> aClass = parent.loadClass("java.glog.base.MDCInheritableThreadLocal");
-                    Constructor<?> constructor = aClass.getConstructor();
-                    Object o = constructor.newInstance();
-                } else {
-                    throw new IllegalStateException("can not find " + GOLG_BASE_JAR);
-                }
-            }
-
-//            instrumentation.appendToBootstrapClassLoaderSearch(new JarFile("D:\\ideaworkspace\\Glog-Base.jar"));
             final ClassLoader agentLoader = getClassLoader(instrumentation, glogCoreJarFile);
-            Class<?> aClass = agentLoader.loadClass(GOLG_TRANSFORMER);
-            Constructor<?> constructor = aClass.getConstructor();
-            Object instance = constructor.newInstance();
-            // 加载 自定义的ClassFileTransformer
-            instrumentation.addTransformer((ClassFileTransformer) instance, true);
+            Class<?> aClass = agentLoader.loadClass(GOLG_BOOTSTRAP);
+            Object bootstrap = aClass.getMethod(GET_INSTANCE, Instrumentation.class, String.class).invoke(null, instrumentation, args);
+
             System.out.println("Agent Load Done.");
 
-            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
-
-            for (int i = 0; i < allLoadedClasses.length; i++) {
-                System.out.println(allLoadedClasses[i]);
-            }
+//            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+//
+//            for (int i = 0; i < allLoadedClasses.length; i++) {
+//                System.out.println(allLoadedClasses[i]);
+//            }
 
 
         } catch (Throwable t) {

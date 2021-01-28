@@ -19,6 +19,7 @@
         <module>Glog-agent</module>
         <module>Glog-core</module>
         <module>Glog-Base</module>
+        <module>Glog-test</module>
     </modules>
 
 
