@@ -49,9 +49,9 @@ public class GlogBootstrap {
             }
         }
         GlogTransformer glogTransformer = new GlogTransformer();
-        // 加载 自定义的ClassFileTransformer
+        // 加载自定义的ClassFileTransformer
         instrumentation.addTransformer((ClassFileTransformer) glogTransformer, true);
-        //重定义类并载入新的字节码
+        // 重定义类并载入新的字节码
         instrumentation.retransformClasses(ThreadPoolExecutor.class);
     }
 
