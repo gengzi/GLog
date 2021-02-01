@@ -1,5 +1,10 @@
 package fun.gengzi.test;
 
+import org.slf4j.MDC;
+
+import java.glog.base.MDCInheritableThreadLocal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -27,7 +32,13 @@ public class BootStrapTest {
             }
         });
 
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("haha","haha");
+        MDCInheritableThreadLocal.set(objectObjectHashMap);
+
         threadPoolExecutor.execute(() -> {
+            Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
+            System.out.println(copyOfContextMap.get("haha"));
             System.out.println("执行");
         });
 

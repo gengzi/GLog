@@ -1,7 +1,7 @@
 package java.glog.base;
 
 
-//import org.slf4j.MDC;
+import org.slf4j.MDC;
 
 import java.util.Map;
 
@@ -25,8 +25,8 @@ public final class MDCInheritableThreadLocal {
         LOGGER_HOLDER.remove();
     }
 
-//    public static void setMdc() {
-//        MDC.setContextMap((Map<String, String>) LOGGER_HOLDER.get());
-//    }
+    public static void setMdc() {
+        MDC.setContextMap((Map<String, String>) LOGGER_HOLDER.get());
+    }
 
 }
