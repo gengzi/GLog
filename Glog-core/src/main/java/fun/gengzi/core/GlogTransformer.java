@@ -16,8 +16,8 @@ public class GlogTransformer implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
         try {
-            System.out.println(className);
-            if (className.equals("java/util/concurrent/ThreadPoolExecutor")) {
+//            System.out.println(className);
+            if ("java/util/concurrent/ThreadPoolExecutor".equals(className)) {
                 System.out.println("Transforming " + className);
                 //读取
                 ClassReader classReader = new ClassReader("java.util.concurrent.ThreadPoolExecutor");
