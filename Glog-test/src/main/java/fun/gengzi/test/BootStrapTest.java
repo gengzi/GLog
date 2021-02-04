@@ -1,6 +1,5 @@
 package fun.gengzi.test;
 
-import org.slf4j.MDC;
 
 import java.glog.base.MDCInheritableThreadLocal;
 import java.util.HashMap;
@@ -12,6 +11,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BootStrapTest {
+
+    static {
+        System.out.println("BootStrapTest classloader :" + BootStrapTest.class.getClassLoader());
+    }
 
 
     public static void main(String[] args) {
@@ -33,12 +36,10 @@ public class BootStrapTest {
         });
 
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("haha","haha");
+        objectObjectHashMap.put("haha", "haha");
         MDCInheritableThreadLocal.set(objectObjectHashMap);
 
         threadPoolExecutor.execute(() -> {
-            Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
-            System.out.println(copyOfContextMap.get("haha"));
             System.out.println("执行");
         });
 

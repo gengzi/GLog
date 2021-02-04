@@ -41,12 +41,13 @@ public class GlogClassVisitor extends ClassVisitor implements Opcodes {
             mv.visitMethodInsn(INVOKESTATIC, "java/glog/base/MDCInheritableThreadLocal", "get", "()Ljava/lang/Object;", false);
             Label label1 = new Label();
             mv.visitJumpInsn(IFNULL, label1);
-            Label label2 = new Label();
-            mv.visitLabel(label2);
-            mv.visitMethodInsn(INVOKESTATIC, "java/glog/base/MDCInheritableThreadLocal", "get", "()Ljava/lang/Object;", false);
-            mv.visitTypeInsn(CHECKCAST, "java/util/Map");
-            mv.visitMethodInsn(INVOKESTATIC, "org/slf4j/MDC", "setContextMap", "(Ljava/util/Map;)V", false);
-            mv.visitLabel(label1);
+            // TODO 移除关于slf4j 的内容
+//            Label label2 = new Label();
+//            mv.visitLabel(label2);
+//            mv.visitMethodInsn(INVOKESTATIC, "java/glog/base/MDCInheritableThreadLocal", "get", "()Ljava/lang/Object;", false);
+//            mv.visitTypeInsn(CHECKCAST, "java/util/Map");
+//            mv.visitMethodInsn(INVOKESTATIC, "org/slf4j/MDC", "setContextMap", "(Ljava/util/Map;)V", false);
+//            mv.visitLabel(label1);
         }
 
         @Override

@@ -20,6 +20,7 @@
         <module>Glog-core</module>
         <module>Glog-Base</module>
         <module>Glog-test</module>
+        <module>Glog-starter-boot</module>
     </modules>
 
 

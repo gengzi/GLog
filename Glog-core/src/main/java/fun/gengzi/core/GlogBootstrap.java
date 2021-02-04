@@ -18,7 +18,6 @@ import java.util.jar.JarFile;
 public class GlogBootstrap {
     private static final String GOLG_BASE_JAR = "Glog-Base.jar";
 
-
     private static GlogBootstrap arthasBootstrap;
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);

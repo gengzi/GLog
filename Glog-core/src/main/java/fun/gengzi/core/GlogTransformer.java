@@ -31,10 +31,25 @@ public class GlogTransformer implements ClassFileTransformer {
                 ClassVisitor classVisitor = new GlogClassVisitor(classWriter);
                 classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
                 byte[] data = classWriter.toByteArray();
-                // 测试方法
+                // TODO 测试方法
                 FileOutputStream fileOutputStream = new FileOutputStream(new File("D:\\ideaworkspace\\ThreadPoolExecutor.class"));
                 fileOutputStream.write(data);
                 fileOutputStream.close();
+                return data;
+            } else if (isAppClassloader(loader, className)) {
+                // 修改测试代码的字节码
+                //读取
+                ClassReader classReader = new ClassReader("java.util.concurrent.ThreadPoolExecutor");
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS) {
+                    @Override
+                    protected ClassLoader getClassLoader() {
+                        return loader;
+                    }
+                };
+                //处理
+                ClassVisitor classVisitor = new GlogClassVisitor(classWriter);
+                classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
+                byte[] data = classWriter.toByteArray();
                 return data;
             }
         } catch (Exception e) {
@@ -42,4 +57,13 @@ public class GlogTransformer implements ClassFileTransformer {
         }
         return null;
     }
+
+
+    public boolean isAppClassloader(ClassLoader loader, String className) {
+        if ("fun/gengzi/test/BootStrapTest".equals(className)) {
+            return true;
+        }
+        return false;
+    }
+
 }

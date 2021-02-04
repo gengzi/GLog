@@ -1,0 +1,9 @@
+# 启用自动注入配置
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  fun.gengzi.baselog.autoconfig.TraceAutoConfig
+
+
+
+# 环境属性配置
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  fun.gengzi.baselog.environment.LogInfoEnvironmentPostProcessor
