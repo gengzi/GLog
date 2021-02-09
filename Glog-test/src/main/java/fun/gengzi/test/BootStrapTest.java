@@ -1,6 +1,8 @@
 package fun.gengzi.test;
 
 
+import fun.gengzi.boot.instrument.annotations.BaseLog;
+
 import java.glog.base.MDCInheritableThreadLocal;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,4 +46,13 @@ public class BootStrapTest {
         });
 
     }
+
+
+    @BaseLog(businessInfo = "ddddd")
+    private void serviceTest(){
+        System.out.println("hahahah");
+    }
+
+
+
 }

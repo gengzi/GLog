@@ -1,5 +1,6 @@
 package fun.gengzi.core;
 
+import fun.gengzi.core.myclass.ClassInstrumentationFactory;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -36,22 +37,25 @@ public class GlogTransformer implements ClassFileTransformer {
                 fileOutputStream.write(data);
                 fileOutputStream.close();
                 return data;
-            } else if (isAppClassloader(loader, className)) {
-                // 修改测试代码的字节码
-                //读取
-                ClassReader classReader = new ClassReader("java.util.concurrent.ThreadPoolExecutor");
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS) {
-                    @Override
-                    protected ClassLoader getClassLoader() {
-                        return loader;
-                    }
-                };
-                //处理
-                ClassVisitor classVisitor = new GlogClassVisitor(classWriter);
-                classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
-                byte[] data = classWriter.toByteArray();
-                return data;
             }
+//            else if (isAppClassloader(loader, className)) {
+//                // 修改测试代码的字节码
+//                //读取
+//                ClassReader classReader = new ClassReader("java.util.concurrent.ThreadPoolExecutor");
+//                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS) {
+//                    @Override
+//                    protected ClassLoader getClassLoader() {
+//                        return loader;
+//                    }
+//                };
+//                //处理
+//                ClassVisitor classVisitor = new GlogClassVisitor(classWriter);
+//                classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
+//                byte[] data = classWriter.toByteArray();
+//                return data;
+//            }
+
+            ClassInstrumentationFactory.modifyTheClass(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +64,13 @@ public class GlogTransformer implements ClassFileTransformer {
 
 
     public boolean isAppClassloader(ClassLoader loader, String className) {
+        // 排除java 包，自身包，只寻找源码包
+        // TODO 使用字节码增强技术解决，spring aop 方法嵌套的问题
+
+        // 利用java 探针技术，修改jdk 源码，反射技术，创建对象
+
+
+
         if ("fun/gengzi/test/BootStrapTest".equals(className)) {
             return true;
         }

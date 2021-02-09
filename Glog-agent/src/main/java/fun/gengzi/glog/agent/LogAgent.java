@@ -77,6 +77,7 @@ final class LogAgent {
             if (args == null) {
                 args = "";
             }
+            // utf-8解码
             args = decodeArg(args);
 
             String glogCoreJar;
@@ -115,18 +116,13 @@ final class LogAgent {
             final ClassLoader agentLoader = getClassLoader(instrumentation, glogCoreJarFile);
             Class<?> aClass = agentLoader.loadClass(GOLG_BOOTSTRAP);
             Object bootstrap = aClass.getMethod(GET_INSTANCE, Instrumentation.class, String.class).invoke(null, instrumentation, args);
-
             System.out.println("Agent Load Done.");
 
-            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
-
-            Class[] initiatedClasses = instrumentation.getInitiatedClasses(ClassLoader.getSystemClassLoader().getParent());
-
-
-            for (int i = 0; i < initiatedClasses.length; i++) {
-                System.out.println(initiatedClasses[i]);
-            }
-
+//            Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+//            Class[] initiatedClasses = instrumentation.getInitiatedClasses(ClassLoader.getSystemClassLoader().getParent());
+//            for (int i = 0; i < initiatedClasses.length; i++) {
+//                System.out.println(initiatedClasses[i]);
+//            }
 
         } catch (Throwable t) {
             t.printStackTrace(ps);

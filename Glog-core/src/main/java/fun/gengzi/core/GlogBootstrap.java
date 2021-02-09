@@ -1,5 +1,6 @@
 package fun.gengzi.core;
 
+import fun.gengzi.core.myclass.ClassInstrumentationFactory;
 import sun.misc.IOUtils;
 
 import java.io.File;
@@ -22,6 +23,9 @@ public class GlogBootstrap {
 
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
     private Instrumentation instrumentation;
+
+    // 参数
+    public static String agentArgs = null;
 
     private GlogBootstrap(Instrumentation instrumentation) throws Throwable {
         this.instrumentation = instrumentation;
@@ -66,7 +70,14 @@ public class GlogBootstrap {
         if (arthasBootstrap != null) {
             return arthasBootstrap;
         }
-
+        int index = args.indexOf(';');
+        // 从命令行设置要字节码编码的包名
+        if (index != -1) {
+            agentArgs = args.substring(index + 1);
+        } else {
+            agentArgs = args;
+        }
+        //
         return getInstance(instrumentation);
     }
 
