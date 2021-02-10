@@ -1,11 +1,13 @@
 package fun.gengzi.core.myclass;
 
 import fun.gengzi.core.GlogBootstrap;
-import fun.gengzi.core.GlogClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.ProtectionDomain;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,16 +27,15 @@ import static org.objectweb.asm.Opcodes.ACC_ENUM;
 public class ClassInstrumentationFactory {
 
     private final static Object ENTRY = new Object();
-
+    // 记录已经转换过的类
     private final static ConcurrentMap<String, Object> MODIFY_CLASS_MAP = new ConcurrentHashMap();
-
 
     /**
      * 修改类
      *
      * @return
      */
-    public static byte[] modifyTheClass(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+    public static byte[] modifyTheClass(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IOException {
         // 校验包名
         boolean flag = packageNameDetection(className);
         if (!flag) {
@@ -82,6 +83,12 @@ public class ClassInstrumentationFactory {
             ClassVisitor classVisitor = new PackageClassVisitor(classWriter);
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
             byte[] data = classWriter.toByteArray();
+            // 转换成功，保存class文件
+//            ByteCodeUtils.savaToFile(classReader.getClassName(), data);
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("D:\\ideaworkspace\\BootStrapTest.class"));
+            fileOutputStream.write(data);
+            fileOutputStream.close();
+
             MODIFY_CLASS_MAP.put(classReader.getClassName(), ENTRY);
             return data;
         } catch (Throwable throwable) {

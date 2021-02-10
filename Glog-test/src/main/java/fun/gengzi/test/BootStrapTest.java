@@ -2,6 +2,7 @@ package fun.gengzi.test;
 
 
 import fun.gengzi.boot.instrument.annotations.BaseLog;
+import org.slf4j.LoggerFactory;
 
 import java.glog.base.MDCInheritableThreadLocal;
 import java.util.HashMap;
@@ -14,10 +15,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BootStrapTest {
 
+
+    private final static String aa = "ahaha";
+
     static {
         System.out.println("BootStrapTest classloader :" + BootStrapTest.class.getClassLoader());
     }
-
 
     public static void main(String[] args) {
         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
@@ -45,11 +48,12 @@ public class BootStrapTest {
             System.out.println("执行");
         });
 
+        serviceTest();
     }
 
 
     @BaseLog(businessInfo = "ddddd")
-    private void serviceTest(){
+    private static void serviceTest(){
         System.out.println("hahahah");
     }
 
