@@ -67,11 +67,19 @@ public class ClassInstrumentationFactory {
                 || "java/lang/Throwable".equals(supperName)) {
             return null;
         }
+
+        // 过滤内部类
+        if(className.contains("$1")){
+            return classfileBuffer;
+        }
+
         // 判断是否已经转换的类
         if (MODIFY_CLASS_MAP.containsKey(classReader.getClassName())) {
             return classfileBuffer;
         }
+
         try {
+            System.out.println("classname" + className);
             // 准备去转换
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
                 @Override

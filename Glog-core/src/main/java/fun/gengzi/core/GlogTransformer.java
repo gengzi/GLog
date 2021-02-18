@@ -55,7 +55,8 @@ public class GlogTransformer implements ClassFileTransformer {
 //                return data;
 //            }
 
-            ClassInstrumentationFactory.modifyTheClass(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
+            byte[] bytes = ClassInstrumentationFactory.modifyTheClass(loader, className, classBeingRedefined, protectionDomain, classfileBuffer);
+            return bytes;
         } catch (Exception e) {
             e.printStackTrace();
         }

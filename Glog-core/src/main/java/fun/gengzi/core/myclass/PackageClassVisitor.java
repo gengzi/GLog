@@ -58,6 +58,7 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature,
                 exceptions);
+        System.out.println("method:"+name);
         //Base类中有两个方法：无参构造以及process方法，这里不增强构造方法
         if (!name.equals("<init>") && mv != null) {
             mv = new MyMethodVisitor(mv);
@@ -66,6 +67,8 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         if (name.equals("<clinit>") && mv != null) {
             mv = new CinitMethodVisit(mv, this.className);
         }
+
+        // 过滤对应的方法
 
         return mv;
     }
@@ -101,8 +104,18 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
                 mv.visitFieldInsn(GETSTATIC, className, "glog1024", "Lorg/slf4j/Logger;");
                 mv.visitLdcInsn(loginfo);
                 mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "info", "(Ljava/lang/String;)V", true);
+
+                Label l1 = new Label();
+                mv.visitLabel(l1);
+                mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+                mv.visitLdcInsn(loginfo);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+
                 mv.visitEnd();
             }
+            // 重置临时变量的值
+            isAnnotationPresent = false;
+            loginfo = "";
             super.visitCode();
         }
 
