@@ -91,12 +91,11 @@ public class ClassInstrumentationFactory {
             ClassVisitor classVisitor = new PackageClassVisitor(classWriter);
             classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
             byte[] data = classWriter.toByteArray();
-            // 转换成功，保存class文件
-//            ByteCodeUtils.savaToFile(classReader.getClassName(), data);
-            FileOutputStream fileOutputStream = new FileOutputStream(new File("D:\\ideaworkspace\\BootStrapTest.class"));
-            fileOutputStream.write(data);
-            fileOutputStream.close();
-
+//            // 转换成功，保存class文件
+////            ByteCodeUtils.savaToFile(classReader.getClassName(), data);
+//            FileOutputStream fileOutputStream = new FileOutputStream(new File("D:\\ideaworkspace\\BootStrapTest.class"));
+//            fileOutputStream.write(data);
+//            fileOutputStream.close();
             MODIFY_CLASS_MAP.put(classReader.getClassName(), ENTRY);
             return data;
         } catch (Throwable throwable) {

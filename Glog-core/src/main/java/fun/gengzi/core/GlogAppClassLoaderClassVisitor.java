@@ -17,10 +17,4 @@ public class GlogAppClassLoaderClassVisitor extends ClassVisitor implements Opco
         cv.visit(V1_5, access, name, signature, superName, interfaces);
     }
 
-
-    
-
-
-
-
 }

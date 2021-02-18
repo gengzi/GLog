@@ -1,10 +1,16 @@
-package fun.gengzi.core;
+package fun.gengzi.core.jdk;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+/**
+ * <h1>JDK类转换器</h1>
+ *
+ * @author gengzi
+ * @date 2021年2月18日15:15:14
+ */
 public class GlogClassVisitor extends ClassVisitor implements Opcodes {
     public GlogClassVisitor(ClassVisitor cv) {
         super(ASM5, cv);
@@ -20,7 +26,8 @@ public class GlogClassVisitor extends ClassVisitor implements Opcodes {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature,
                 exceptions);
-        //Base类中有两个方法：无参构造以及process方法，这里不增强构造方法
+        // Base类中有两个方法：无参构造以及process方法，这里不增强构造方法
+        // 只修改必要方法
         if (name.equals("execute") && mv != null) {
             mv = new MyMethodVisitor(mv);
         }
