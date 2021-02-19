@@ -2,7 +2,6 @@ package fun.gengzi.core.myclass;
 
 import org.objectweb.asm.*;
 
-
 /**
  * <h1>类转换器</h1>
  * <p>
@@ -26,7 +25,7 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
     private String methodName;
 
     public PackageClassVisitor(ClassVisitor cv) {
-        super(ASM5, cv);
+        super(ASM6, cv);
     }
 
     @Override
@@ -60,6 +59,12 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature,
                 exceptions);
+
+
+        final Type[] argumentTypes = Type.getArgumentTypes(desc);
+
+
+
         // System.out.println("method:" + name);
         // init 方法调用对象的构造方法，会触发init方法
         // cinit 在类初始化阶段，会触发cinit方法
@@ -71,15 +76,21 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         if (name.equals("<clinit>") && mv != null) {
             mv = new CinitMethodVisit(mv, this.className);
         }
+
+
+
         return mv;
     }
+
+
 
 
     class MyMethodVisitor extends MethodVisitor implements Opcodes {
 
         public MyMethodVisitor(MethodVisitor mv) {
-            super(Opcodes.ASM5, mv);
+            super(Opcodes.ASM6, mv);
         }
+
 
         /**
          * 加载注释
@@ -96,11 +107,58 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         }
 
         @Override
+        public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible) {
+            return super.visitParameterAnnotation(parameter, descriptor, visible);
+        }
+
+        @Override
+        public void visitParameter(String name, int access) {
+            super.visitParameter(name, access);
+        }
+
+        @Override
+        public void visitAttribute(Attribute attribute) {
+            super.visitAttribute(attribute);
+        }
+
+        @Override
+        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
+            super.visitFieldInsn(opcode, owner, name, descriptor);
+        }
+
+
+
+
+        @Override
+        public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
+            super.visitAnnotableParameterCount(parameterCount, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
+            return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
+        }
+
+        @Override
+        public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
+
+            System.out.println(name);
+
+
+            super.visitLocalVariable(name, descriptor, signature, start, end, index);
+        }
+
+        @Override
         public void visitCode() {
             // AnnotationVisitor annotationVisitor = this.visitAnnotation("Lfun/gengzi/boot/instrument/annotations/BaseLog;", true);
             if (isAnnotationPresent) {
                 System.out.println("Baselog注解增强的方法method:" + methodName);
                 // 增加日志加入的代码
+
+                // 增加service 拦截的代码
+
+
+
                 Label l0 = new Label();
                 mv.visitLabel(l0);
                 mv.visitFieldInsn(GETSTATIC, className, "glog1024", "Lorg/slf4j/Logger;");

@@ -48,13 +48,14 @@ public class BootStrapTest {
             System.out.println("执行");
         });
 
-        serviceTest();
+//        serviceTest();
+        serviceTest("hello",objectObjectHashMap);
     }
 
 
     @BaseLog(businessInfo = "ddddd")
-    private static void serviceTest(){
-        System.out.println("hahahah");
+    private static void serviceTest(String name , Object object){
+        System.out.println(name+"hahahah");
     }
 
 
