@@ -21,6 +21,9 @@ import static org.objectweb.asm.Opcodes.ACC_ENUM;
  * <p>
  * 作用：过滤需要进行插桩的类
  *
+ *
+ * https://www.cnblogs.com/hebaibai/archive/2019/06/12/11011004.html
+ *
  * @author gengzi
  * @date 2021年2月8日13:48:36
  */
@@ -89,7 +92,7 @@ public class ClassInstrumentationFactory {
             };
             //处理
             ClassVisitor classVisitor = new PackageClassVisitor(classWriter);
-            classReader.accept(classVisitor, ClassReader.SKIP_DEBUG);
+            classReader.accept(classVisitor, ClassReader.SKIP_FRAMES);
             byte[] data = classWriter.toByteArray();
 //            // 转换成功，保存class文件
 ////            ByteCodeUtils.savaToFile(classReader.getClassName(), data);
