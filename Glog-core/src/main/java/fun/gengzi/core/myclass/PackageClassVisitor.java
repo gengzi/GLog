@@ -2,6 +2,8 @@ package fun.gengzi.core.myclass;
 
 import org.objectweb.asm.*;
 
+import java.util.HashMap;
+
 /**
  * <h1>类转换器</h1>
  * <p>
@@ -23,6 +25,8 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
     private String className;
     // 方法名称
     private String methodName;
+    // 参数map
+    private HashMap<String, Integer> paramsMap = new HashMap<>();
 
     public PackageClassVisitor(ClassVisitor cv) {
         super(ASM6, cv);
@@ -64,7 +68,6 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         final Type[] argumentTypes = Type.getArgumentTypes(desc);
 
 
-
         // System.out.println("method:" + name);
         // init 方法调用对象的构造方法，会触发init方法
         // cinit 在类初始化阶段，会触发cinit方法
@@ -78,11 +81,8 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         }
 
 
-
         return mv;
     }
-
-
 
 
     class MyMethodVisitor extends MethodVisitor implements Opcodes {
@@ -107,44 +107,11 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
         }
 
         @Override
-        public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible) {
-            return super.visitParameterAnnotation(parameter, descriptor, visible);
-        }
-
-        @Override
-        public void visitParameter(String name, int access) {
-            super.visitParameter(name, access);
-        }
-
-        @Override
-        public void visitAttribute(Attribute attribute) {
-            super.visitAttribute(attribute);
-        }
-
-        @Override
-        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-            super.visitFieldInsn(opcode, owner, name, descriptor);
-        }
-
-
-
-
-        @Override
-        public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
-            super.visitAnnotableParameterCount(parameterCount, visible);
-        }
-
-        @Override
-        public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
-            return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
-        }
-
-        @Override
         public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
-
-            System.out.println(name);
-
-
+            if (isAnnotationPresent) {
+                // 设置参数名 和 索引值
+                paramsMap.put(name, index);
+            }
             super.visitLocalVariable(name, descriptor, signature, start, end, index);
         }
 
@@ -157,10 +124,9 @@ public class PackageClassVisitor extends ClassVisitor implements Opcodes {
 
                 // 增加service 拦截的代码
 
-
-
                 Label l0 = new Label();
                 mv.visitLabel(l0);
+//                mv.visitVarInsn(ALOAD, 0);
                 mv.visitFieldInsn(GETSTATIC, className, "glog1024", "Lorg/slf4j/Logger;");
                 mv.visitLdcInsn(loginfo);
                 mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "info", "(Ljava/lang/String;)V", true);
